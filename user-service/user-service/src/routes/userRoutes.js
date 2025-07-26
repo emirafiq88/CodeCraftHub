@@ -1,10 +1,15 @@
 const express = require('express');
-const { registerUser, loginUser } = require('../controllers/userController');
-
 const router = express.Router();
+const userController = require('../controllers/userController');
+// const authMiddleware = require('../middleware/authMiddleware'); // Also comment this out for now
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-// Add more routes for getting user, updating user, etc.
+// Register a new user
+router.post('/register', userController.registerUser);
+
+// Login an existing user
+router.post('/login', userController.loginUser);
+
+// Update user profile (protected route)
+// router.put('/:id', authMiddleware, userController.updateUserProfile); // <-- COMMENT THIS LINE OUT
 
 module.exports = router;

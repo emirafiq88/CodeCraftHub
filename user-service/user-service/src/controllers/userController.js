@@ -43,6 +43,35 @@ const loginUser = async (req, res) => {
     }
 };
 
-// Add more user-related functions (e.g., get user, update user, etc.)
+// Update user profile
+const updateUserProfile = async (req, res) => {
+    try {
+        // This is a basic placeholder implementation.
+        // You can add logic here to find the user by req.params.id
+        // and update their details (e.g., username) from req.body.
+        const user = await User.findById(req.params.id);
 
-module.exports = { registerUser, loginUser };
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Example: Update the username if provided
+        if (req.body.username) {
+            user.username = req.body.username;
+        }
+
+        await user.save();
+        res.status(200).json({ message: `Profile for user ${req.params.id} updated successfully.` });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+// Export all controller functions
+module.exports = {
+    registerUser,
+    loginUser,
+    updateUserProfile
+};

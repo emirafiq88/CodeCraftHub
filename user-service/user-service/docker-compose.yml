@@ -1,0 +1,41 @@
+services:
+  # The user-service application container.
+  user-service:
+    build: .
+    ports:
+      - "5000:5000"
+    restart: on-failure
+    environment:
+      - MONGODB_URI=mongodb://root:Vs3kF8qFZ9rzGmp8LcLUeG8L@mongo:27017/user-service?authSource=admin
+      - PORT=5000
+      - JWT_SECRET=a_secure_jwt_secret_for_docker
+    networks:
+      - app-network
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  # The MongoDB database container.
+  mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=Vs3kF8qFZ9rzGmp8LcLUeG8L
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+    # This healthcheck uses a more robust command format
+    healthcheck:
+      test: ["CMD", "mongosh", "--host", "mongo", "--username", "root", "--password", "Vs3kF8qFZ9rzGmp8LcLUeG8L", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
